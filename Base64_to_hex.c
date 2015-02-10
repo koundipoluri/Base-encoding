@@ -41,39 +41,86 @@ void base64_to_hex(unsigned char* in,size_t inlen,unsigned char* out,size_t outl
 {
 	int i=0,j=0,a,b;
 	for(i=0;i<inlen;i++)
+	{	
+	if(in[i] == '=' && in[i+1] == '=')
 	{
 		a = decval_64(in[i++]);
+		b = 0;		
+		out[--j]='\0';
+		break;
+	}else if(in[i] != '=' && in[i+1] == '=')
+	{
+		a = decval_64(in[i++]);
+		b = 0;
+		
+		out[j++] = hexchar((a>>2));
+		out[j++] = '\0';
+	}else
+	{
+	a = decval_64(in[i++]);
 		b = decval_64(in[i]);
 		
 		out[j++] = hexchar((a>>2));
 		out[j++] = hexchar(((a & 3)<<2)+(b>>4));
 		out[j++] = hexchar((b & 15));
 	}
+	out[j] = '\0';
+		
+	}
 
 }
 void hex_to_base64(unsigned char* in,size_t inlen,unsigned char *out,size_t outlen)
 {
 		int i,j=0,a,b,c;
-		for(i=0;i<inlen;i++)
+		for(i=0;i<inlen-1;i++)
 		{
+			if(i == inlen-2)
+			{
+			a= decval_16(in[i++]);
+			b= decval_16(in[i++]);
+			c= 0;
+		
+			out[j++]= base64char((a<<2) + (b>>2));
+			out[j++]= base64char(((b & 3)<<4) + (c));
+			out[j++]= '=';
+			out[j++]= '=';
+			out[j]='\0';
+			break;
+		
+			}else
+			if(i == inlen-1)
+			{
+			a= decval_16(in[i++]);
+			b= 0;
+			c= 0;
+			
+			out[j++]= base64char((a<<2) + (b>>2));
+			out[j++]= '=';
+			out[j++]= '\0';
+			break;
+			
+			}else{
+			
 			a= decval_16(in[i++]);
 			b= decval_16(in[i++]);
 			c= decval_16(in[i]);
 			
 			out[j++]= base64char((a<<2) + (b>>2));
 			out[j++]= base64char(((b & 3)<<4) + (c));
+			}
+			out[j]='\0';
 		}
 	
 }
 int main()
 {
-	unsigned char x[]="UKXO5d/Fazj28j4Hutlm/w==";
-	unsigned char u[]= "50a5cee5dfc56b38f6f23e07bad966ff";
-	unsigned char *y = calloc(32,1);
-	unsigned char *v = calloc(24,1);
+	unsigned char x[]="eAVYhimL/nWjPXEmroY=";
+	unsigned char u[]= "78055886298bfe75a33d7126ae8636b9";
+	unsigned char *y = malloc((4*strlen(x)/3)+2);
+	unsigned char *v = malloc((3*strlen(x)/4)+2);
 	hex_to_base64(u,strlen(u),v,24);
 	base64_to_hex(x,strlen(x),y,32);
-	printf("v string is %s\n",v);
-	printf("y string is %s\n",y);
+	printf("u string is %s == %d\n",x,strlen(x));
+	printf("v string is %s == %d\n",y,strlen(y));
 	return 0;
 }
