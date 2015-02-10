@@ -38,6 +38,7 @@ void Base64_to_hex(unsigned char* in,size_t inlen,unsigned char* out,size_t outl
 }
 int main()
 {
+	//hard coded values need to be updated!!
 	unsigned char x[]="UKXO5d/Fazj28j4Hutlm/w==";
 	unsigned char *y = calloc(32,1);
 	
