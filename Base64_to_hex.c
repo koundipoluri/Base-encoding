@@ -112,15 +112,21 @@ void hex_to_base64(unsigned char* in,size_t inlen,unsigned char *out,size_t outl
 		}
 	
 }
-int main()
+int main(int argc,char** argv)
 {
-	unsigned char x[]="eAVYhimL/nWjPXEmroY=";
-	unsigned char u[]= "78055886298bfe75a33d7126ae8636b9";
-	unsigned char *y = malloc((4*strlen(x)/3)+2);
-	unsigned char *v = malloc((3*strlen(x)/4)+2);
-	hex_to_base64(u,strlen(u),v,24);
-	base64_to_hex(x,strlen(x),y,32);
-	printf("u string is %s == %d\n",x,strlen(x));
-	printf("v string is %s == %d\n",y,strlen(y));
+	unsigned char *x,*y;
+	if(strcmp(argv[1],"1")==0)
+	{
+			x = argv[2];
+			y = malloc((4*strlen(x)/3)+2);
+			base64_to_hex(x,strlen(x),y,(4*strlen(x)/3)+2);
+	}else if(strcmp(argv[1],"0")==0)
+	{
+		x = argv[2];
+		y = malloc((3*strlen(x)/4)+2);
+		hex_to_base64(x,strlen(x),y,(3*strlen(x)/4)+2);
+	}
+	printf("x string is %s == %d\n",x,strlen(x));
+	printf("y string is %s == %d\n",y,strlen(y));
 	return 0;
 }
